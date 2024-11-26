@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import ScrumPoker from "../components/ScrumPoker.vue";
 
 const routes = [
-  { path: "/", name: "ScrumPoker", component: ScrumPoker },
+  { path: "/adsa", name: "ScrumPoker", component: ScrumPoker },
 ];
 
 const router = createRouter({
