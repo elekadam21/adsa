@@ -7,4 +7,5 @@ export default defineConfig({
     exclude: ['vue']
   },
   plugins: [vue()],
+  base: "/adsa/"
 })
