@@ -146,4 +146,14 @@ th {
   width: 50%;
 
 }
+
+@media (prefers-color-scheme: light) {
+  table {
+    background-color: #f9f9f9;
+    border-color: black;
+  }
+  th, td {
+    border-color: black
+  }
+}
 </style>
