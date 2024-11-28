@@ -19,7 +19,10 @@
       </div>
 
       <div class="results">
-        <button @click="toggleVoteVisibility()">{{ areVotesVisible ? 'Show Votes' : 'Hide Votes' }}</button>
+        <div class="button-container">
+          <button @click="toggleVoteVisibility()">{{ areVotesVisible ? 'Hide Votes' : 'Show Votes'}}</button>
+          <button @click="resetVotes()">Reset Votes</button>
+        </div>
         <table>
           <tbody>
             <tr>
@@ -28,7 +31,7 @@
             </tr>
             <tr v-for="(vote, name, index) in sessionData.users" :key="index">
               <td>{{ name }}</td>
-              <td>{{ areVotesVisible ? '?' : vote === '' ? 'No vote' : vote }}</td>
+              <td>{{ vote === '' ? '-' : areVotesVisible ? vote : '?'  }}</td>
             </tr>
           </tbody>
         </table>
@@ -44,12 +47,24 @@ import { ref as fbRef, onValue, set, update, onDisconnect } from "firebase/datab
 import { db } from "../firebase";
 import { reactive, ref } from 'vue'
 
+interface User {
+  [key: string]: string
+}
+
 const userName = ref('');
-let sessionData = reactive({} as Record<string, string | null>);
+let sessionData = reactive({} as Record<string, User>);
 const sessionJoined = ref(false);
 const cards = ['0', '1', '2', '3', '5', '8', '13', '21', '34', '55', '89', '?'];
 const selectedCard = ref<string | null>(null);
 const areVotesVisible = ref(false);
+
+const sessionRef = fbRef(db, `session`);
+  onValue(sessionRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    sessionData.users = data.users || {};
+    areVotesVisible.value = data.areVotesVisible || false;    
+    selectedCard.value = sessionData.users[userName.value]
+  });
 
 const joinSession = () => {
   if (!userName.value) {
@@ -57,14 +72,13 @@ const joinSession = () => {
     return;
   }
 
-  // Listen to session updates
-  const sessionRef = fbRef(db, `session`);
-  onValue(sessionRef, (snapshot) => {
-    console.log(snapshot.val());
-    const data = snapshot.val() || {};
-    sessionData.users = data.users || {};
-    areVotesVisible.value = data.areVotesVisible || false;
-  });
+
+  if (sessionData?.users) {
+    if (Object.keys(sessionData?.users).includes(userName.value)) {
+        alert("Name already taken!");
+        return
+      }
+  }
 
   const userRef = fbRef(db, `session/users/${userName.value}`);
 
@@ -93,6 +107,17 @@ const submitVote = (card: string) => {
 
 const toggleVoteVisibility = () => {
   update(fbRef(db, `session`), { areVotesVisible: !areVotesVisible.value });
+}
+
+const resetVotes = () => {
+  update(fbRef(db, `session`), { areVotesVisible: false });
+
+  if (sessionData) {
+    Object.keys(sessionData.users).forEach(user => {      
+      const userRef = fbRef(db, `session/users/${user}`);
+      set(userRef, '')
+    });
+  }
 }
 </script>
 
@@ -123,6 +148,15 @@ input {
 
 .results {
   margin-top: 40px;
+}
+
+.button-container {
+  display: flex;
+  gap: 20px;
+}
+
+.button-container button {
+  width: 125px;
 }
 
 table {
