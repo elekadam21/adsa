@@ -162,9 +162,9 @@ input {
 table {
   width: 800px;
   margin: 20px auto;
-  background-color: #1a1a1a;
+  background-color: var(--color-primary);
   border-radius: 4px;
-  border: 1px solid white;
+  border: 1px solid var(--color-accent);
   border-collapse: collapse;
 
 }
@@ -179,15 +179,5 @@ th {
   border: 1px solid white;
   width: 50%;
 
-}
-
-@media (prefers-color-scheme: light) {
-  table {
-    background-color: #f9f9f9;
-    border-color: black;
-  }
-  th, td {
-    border-color: black
-  }
 }
 </style>

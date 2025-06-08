@@ -3,7 +3,9 @@
 
 <template>
   <div id="app">
-    <router-view />
+    <div class="content">
+      <router-view />
+    </div>
   </div>
 </template>
 
@@ -19,5 +21,18 @@
 }
 .logo.vue:hover {
   filter: drop-shadow(0 0 2em #42b883aa);
+}
+
+.content {
+  background-color: var(--color-background);
+  color: var(--color-text);
+  border: 1px solid var(--color-accent);
+  border-radius: 12px;
+  padding: 2rem;
+  min-width:  800px;
+  min-height:  600px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 </style>
